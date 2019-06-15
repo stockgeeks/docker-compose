@@ -28,17 +28,3 @@ services:
     - zookeeper
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-
-  # Kafka manager is a quite useful tool that enables you to check kafka broker and client information and was originally developed 
-  # by yahoo and donated to open source. We use an available dockerized version of it in this example.
-  # version of it to simplify.
-  # https://hub.docker.com/r/hlebalbau/kafka-manager/
-  kafka-manager:
-    container_name: kafka-manager
-    image: hlebalbau/kafka-manager:latest
-    environment:
-    - ZK_HOSTS=zookeeper:2181
-    ports:
-    - 9000:9000
-    depends_on:
-    - kafka
