@@ -59,8 +59,7 @@ With zookeeper and Kafka running locally let's issue some commands to test our s
 docker exec -it kafka /bin/bash
 ```
 
-Now you're inside the running Kafka container and can access the Kafka support scripts available in the command line under `/opt/kafka/bin`, lets start creating 
-a topic called client with 1 partition and replication factor 1.
+Now you're inside the running Kafka container and can access the Kafka support scripts available in the command line under `/opt/kafka/bin`, let's start creating a topic called client with 1 partition and replication factor 1.
 
 ```bash
 ./kafka-topics.sh --bootstrap-server kafka:9092 --create --topic client --partitions 1 --replication-factor 1
@@ -94,10 +93,12 @@ and now in another terminal window let's produce messages to the client topic:
 ```bash
 ./kafka-console-producer.sh --broker-list localhost:9092 --topic client
 ```
+Your terminal will be in waiting status, see screenshot below, with a `>`, type in the line and press enter, the message will be produced to Kafka and received by the client in the consumer terminal.
 
-Your terminal will be in a waiting status, see screenshot below, with an `>` type in the line and press enter, the message will be produced to kafka and received by the client in the consumer terminal.
+![terminal consumer / producer](https://thepracticaldev.s3.amazonaws.com/i/rjqtzn8b0n6z2jiad1mt.png)
 
-Let's then check the compose file:  
+Now that we have kafka running and have produced and consumed a few messages,
+let's now check the compose file:  
 
 ```yaml
 version: '3.2'
@@ -149,18 +150,17 @@ services:
 
 ```
 
+### Confluent Kafka and Zookeeper images
 
-
-
-
-### confluent
+Let's now run kafka [confluent docker image](https://hub.docker.com/r/confluentinc/cp-kafka/).
+In the project under the folder one-to-run-them-all there's a second docker-compose file called `docker-compose-confluent.yml` to run it we can issue the same command as before specifying the file name when want to run using the option `-f` , but before we do that please make sure the previous containers are stopped, if not run from the same folder `docker-compose down -v` which will stop the containers we started before in this article. 
 
 ```yaml
-
+docker-compose -f docker-compose-confluent.yml up -d
 
 ```
 
-
+Check if the containers are running and put a `watch docker ps` as before to be sure the confluent containers with zookeeper and kafka are running. If yes, let's execute the same commands as before, the main difference is that Confluent Kafka has it's own installation standars so the kafka scripts are under.  // TODO COMPLETE AND COMPLEMENT THIS INFORMATION.
 
 
 
@@ -185,5 +185,3 @@ docker run -it
 ## Confluent cli tools
 
 ## Minikube
-
-
