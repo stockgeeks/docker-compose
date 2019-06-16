@@ -1,6 +1,6 @@
 # One to run them all
 
-In this Post we're going to cover how to run Kafka for local development our applications, so when we need to run future examples from the posts, it can be used as a basic reference, I will try to keep consistency on this approach. 
+In this Post we're going to cover how to run Kafka for local development our applications, this will be useful to run future examples and can be used as a basic reference, I will try to keep consistency with this approach.
 
 There are many possible ways to run Kafka locally for development, among those the most common are probably:
  
@@ -16,7 +16,7 @@ From all the possibilities the one I find more intuitive and easy to maintain in
 
 Docker compose uses a simple YAML file and can also build from Dockerfiles for some more advanced setups if you need more control of the images you're building in your projects. Compose also enables you to set configuration parameters and share those changes within a repository with other team members and reuse it to run as a [Swarm Cluster](https://docs.docker.com/engine/swarm/) if you so desire, so we're going to cover mostly docker-compose here as it's my preference and I will provide some hints and links to  documentation on how to do it using other approaches. 
 
-> I think important to clarify that I am not advocating to run all your application in docker during development it should be only the dependencies and mocks that you might need, it's very important that you are enabled to run your unit tests and current application you are working on directly from the IDE of your choice so you can have better development experience and quicker development cycles.
+> I think important to clarify that I am not advocating to run all your application in docker during development, it should be only the dependencies and mocks that you might need, during development it's very important that you are enabled to run your unit tests and current application you are working on directly from the IDE of your choice so you can have a much better development experience and quicker development cycles.
 
 ## Running Kafka from a docker-compose file
 
