@@ -8,8 +8,7 @@ There are many possible ways to do that:
  * directly from the command line using Docker, 
  * using a docker-compose file,
  * using the Confluent CLI commands, 
- * using local Kubernetes, 
- * running them on the cloud 
+ * running them on the cloud.
 
 and possibly other creative ways. 
 
@@ -153,35 +152,67 @@ services:
 ### Confluent Kafka and Zookeeper images
 
 Let's now run kafka [confluent docker image](https://hub.docker.com/r/confluentinc/cp-kafka/).
-In the project under the folder one-to-run-them-all there's a second docker-compose file called `docker-compose-confluent.yml` to run it we can issue the same command as before specifying the file name when want to run using the option `-f` , but before we do that please make sure the previous containers are stopped, if not run from the same folder `docker-compose down -v` which will stop the containers we started before in this article. 
+In the project under the folder one-to-run-them-all there's a [second docker-compose](https://github.com/stockgeeks/docker-compose/blob/master/one-to-run-them-all/docker-compose-confluent.yml) file called `docker-compose-confluent.yml` to run it we can issue the same command as before specifying the file name when want to run using the option `-f` , but before we do that please make sure the previous containers are stopped, if not run from the same folder `docker-compose down -v` which will stop the containers we started before in this article. 
 
 ```yaml
 docker-compose -f docker-compose-confluent.yml up -d
 
 ```
 
-Check if the containers are running and put a `watch docker ps` as before to be sure the confluent containers with zookeeper and kafka are running. If yes, let's execute the same commands as before, the main difference is that Confluent Kafka has it's own installation standars so the kafka scripts are under.  // TODO COMPLETE AND COMPLEMENT THIS INFORMATION.
+Check if the containers are running and put a `watch docker ps` as before to be sure the confluent containers with zookeeper and kafka are running. If yes, let's execute the same commands as before, the main difference is that Confluent Kafka has it's own installation standars so the kafka scripts are under `/usr/bin` which basically gives access to them from everywhere in the shell inside the container, so go ahead and repeat the same commands issued for the previous example to enter the container shell `docker exec -it docker /bin/bash` and the commands to list, publish, consume are almost the same:
 
+Enter the kafka container: 
 
+```bash
+docker exec -it kafka /bin/bash
+```
+
+Start the consumer
+
+```bash
+kafka-console-consumer --bootstrap-server localhost:9092 --topic client
+```
+
+Start the producer
+
+```bash
+kafka-console-producer --broker-list kafka:9092 --topic client
+```
+
+> By default for develoment which this images are meant for, the topic creation happens automatically when a client tries to consume or produce to it, this should be disabled in a production environment.
 
 ## Command line using docker images
 
 This option only requires that you have Docker installed, not docker-compose, you'll run the docker images for Kafka and zookeeper from the command line and that's it. Make sure you have Docker installed. The tricky part is to pick the docker image, there are many available. The most populars in my perception(would need further research to confirm) are: 
 
-* Confluent Kafka Images
-* Spotify 
 * wurstmeister
+* Confluent Kafka Images
 
-> Please leave a comment if you know any other popular distribution of kafka / zookeeper available on docker hub.
-
-```bash
-docker run -it 
-
-```
+> Please leave a comment if you prefer any other kafka image for development.
 
 
 ## Command line using binaries
 
+This approach is well documented with all required links to download the binaries in the official Apache Kafka Documentation [Quick Start](https://kafka.apache.org/documentation/#quickstart) section.
+
 ## Confluent cli tools
 
-## Minikube
+
+## Options for Production
+
+### Managed Kafka Offers In the Cloud
+
+If you have plans to run your kafka Cluster in the Cloud fully automated, there are a few options, the most natural being [Confluent Cloud](https://www.confluent.io/confluent-cloud/) as it's managed by a team with many Kafka core contributtors and it's creators, currently you can deploy Confluent managed Kafka clusters to Google Cloud or AWS.
+
+Other possible options include: 
+
+[IBM Event Streams for IBM Cloud](https://www.ibm.com/cloud/event-streams-for-cloud) is a full, automated Kafka managed service provided by IBM. 
+
+For Azure check their [Quickstart article](https://docs.microsoft.com/en-us/azure/hdinsight/kafka/apache-kafka-get-started) and more [details in this post](https://azure.microsoft.com/en-us/blog/processing-trillions-of-events-per-day-with-apache-kafka-on-azure/) with extra links and detailed information.
+
+For AWS there's the AWS official offer [MSK](https://aws.amazon.com/msk/) but you will also find different options and companies that offer Kafka managed cluster services over AWS.
+
+For Google Cloud it's recommended to use the [Confluent offer](https://console.cloud.google.com/marketplace/details/confluent-saas/confluent-cloud?pli=1) as mentioned above.  
+
+### Kubernetes or Swarm versions
+
