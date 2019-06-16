@@ -1,8 +1,8 @@
 # One to run them all
 
-In this Post, we're going to cover running Kafka locally for when we're developing our application, so when you need to run future examples from the posts here or your own application, you know how to do it. 
+In this Post we're going to cover how to run Kafka for local development our applications, so when we need to run future examples from the posts, it can be used as a basic reference, I will try to keep consistency on this approach. 
 
-There are many possible ways to do that:
+There are many possible ways to run Kafka locally for development, among those the most common are probably:
  
  * downloading Kafka and Zookeeper manually and running them locally, 
  * directly from the command line using Docker, 
@@ -10,9 +10,7 @@ There are many possible ways to do that:
  * using the Confluent CLI commands, 
  * running them on the cloud.
 
-and possibly other creative ways. 
-
-From all the possibilities the one I find more intuitive and easy to maintain in development projects is using docker-compose. I have used different VM based solutions in the past but using docker-compose gives a better developer experience. So I will stick to that in my posts here.
+From all the possibilities the one I find more intuitive and easy to maintain in development during projects is using docker-compose. I have used different approaches, including VM based solutions in the past but using docker-compose brings a better developer experience. So I will stick to that in my posts here.
 
 > If you don't have docker and docker-compose installed please check out [my previous post](https://dev.to/thegroo/basic-setup-for-some-tutorials-51m) where I point out directions to where to find the proper documentation to install it in your own environment.
 
@@ -22,7 +20,7 @@ Docker compose uses a simple YAML file and can also build from Dockerfiles for s
 
 ## Running Kafka from a docker-compose file
 
-There are many available options, you can also use the Kafka and zookeeper binaries to pack your own docker images but here I'll show two existing available Kafka images from docker-hub.
+There are many available options, you can also use the Kafka and Zookeeper binaries to pack your own docker images but here I'll show two existing available Kafka images from docker-hub.
 
 * wurstmeister Kafka and Zookeeper docker images.
 * Confluent Kafka and Zookeeper images.
@@ -35,8 +33,9 @@ git clone git@github.com:stockgeeks/docker-compose.git
 
 Open the cloned project in your favorite IDE. The source code for this post is under the folder one-to-run-them-all. Navigate to this folder in a command prompt to run the docker-compose commands presented next. If you have problems running the commands make sure to have docker and docker-compose installed as explained in the link shared above and check [this compatibility matrix](https://github.com/docker/compose/releases).
 
+> When running kafka in this examples notice the configurations on the project specifically the listener and advertised.listener and advertised.hostname as they're key to understand later how we can connect our application running from the IDE to the local kafka development broker we are running here in this post.
 
-### wurstmeister
+### Kakfa wurstmeister image
 
 For this initial example, we're going to use the latest Kafka docker image from [wurstmeister](https://github.com/wurstmeister) which it's available in [docker hub here](https://hub.docker.com/r/wurstmeister/kafka/).
 
@@ -52,7 +51,13 @@ you can then use `docker ps` to check the running containers. If you're comforta
 
 > If you're using Mac or Windows it's also possible to install watch command and use it.
 
-With zookeeper and Kafka running locally let's issue some commands to test our setup, let's first enter the running Kafka docker container:
+To check and follow the container logs in another terminal window, always in the same folder level as the docker-compose file: 
+
+```bash
+docker-compose logs -f 
+```
+
+Now that we have Kafka running locally let's issue some commands to test our setup, first enter the running Kafka docker container:
 
 ```bash
 docker exec -it kafka /bin/bash
@@ -97,7 +102,7 @@ Your terminal will be in waiting status, see screenshot below, with a `>`, type 
 ![terminal consumer / producer](https://thepracticaldev.s3.amazonaws.com/i/rjqtzn8b0n6z2jiad1mt.png)
 
 Now that we have kafka running and have produced and consumed a few messages,
-let's now check the compose file:  
+let's check the docker-compose file:  
 
 ```yaml
 version: '3.2'
@@ -149,14 +154,15 @@ services:
 
 ```
 
+To stop your Kafka and Zookeeper, from the same folder where the compose file is, using the command line: `docker-compose down -v` which will also clean the mounted volume reseting the kafka topics, if you want to keep existing messages you can remove the -v from the command.
+
 ### Confluent Kafka and Zookeeper images
 
 Let's now run kafka [confluent docker image](https://hub.docker.com/r/confluentinc/cp-kafka/).
-In the project under the folder one-to-run-them-all there's a [second docker-compose](https://github.com/stockgeeks/docker-compose/blob/master/one-to-run-them-all/docker-compose-confluent.yml) file called `docker-compose-confluent.yml` to run it we can issue the same command as before specifying the file name when want to run using the option `-f` , but before we do that please make sure the previous containers are stopped, if not run from the same folder `docker-compose down -v` which will stop the containers we started before in this article. 
+In the project under the folder one-to-run-them-all there's a [second docker-compose](https://github.com/stockgeeks/docker-compose/blob/master/one-to-run-them-all/docker-compose-confluent.yml) file called `docker-compose-confluent.yml` to run it we can issue the same command as before specifying the file name when want to run using the option `-f` , but before we do that please make sure the previous containers are stopped, if not, run from the command line: `docker-compose down -v` which will stop the containers we started previously. 
 
 ```yaml
 docker-compose -f docker-compose-confluent.yml up -d
-
 ```
 
 Check if the containers are running and put a `watch docker ps` as before to be sure the confluent containers with zookeeper and kafka are running. If yes, let's execute the same commands as before, the main difference is that Confluent Kafka has it's own installation standars so the kafka scripts are under `/usr/bin` which basically gives access to them from everywhere in the shell inside the container, so go ahead and repeat the same commands issued for the previous example to enter the container shell `docker exec -it docker /bin/bash` and the commands to list, publish, consume are almost the same:
@@ -190,15 +196,18 @@ This option only requires that you have Docker installed, not docker-compose, yo
 
 > Please leave a comment if you prefer any other kafka image for development.
 
-
 ## Command line using binaries
 
 This approach is well documented with all required links to download the binaries in the official Apache Kafka Documentation [Quick Start](https://kafka.apache.org/documentation/#quickstart) section.
 
 ## Confluent cli tools
 
+Confluent provides a very user friendly way of running local kafka for development together if all it's platform which includes many extra features including management and monitoring tools and much more. 
 
-## Options for Production
+If you're using Confluent stack this can be a great option. They have very detailed documentation on their pages about it: 
+
+* [Confluent CLI](https://docs.confluent.io/current/cli/index.html)
+* [Docker Developer Guide](https://docs.confluent.io/current/installation/docker/development.html)
 
 ### Managed Kafka Offers In the Cloud
 
@@ -216,3 +225,12 @@ For Google Cloud it's recommended to use the [Confluent offer](https://console.c
 
 ### Kubernetes or Swarm versions
 
+I don't have any experience here, but there are some talks available specially for running Kafka in Kubernetes. Some links: 
+
+* [Running Kafka in Kubernetes practical guide](https://www.confluent.io/kafka-summit-lon19/running-kafka-in-kubernetes-practical-guide)
+* [Running production Kafka clusters in Kubernetes](https://www.confluent.io/kafka-summit-lon19/running-production-kafka-clusters-kubernetes) 
+
+
+## What's next
+
+So in this post I've tried to give some introduction on how to spin up a local kafka infrastructure locally for develoment. This is the basis to the upcoming posts where we will see a bit more of developing Kafka Applications with Springboot.
