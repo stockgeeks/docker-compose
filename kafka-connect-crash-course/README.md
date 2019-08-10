@@ -2,4 +2,4 @@
 
 This is the source code used in the blog post in dev.to about kafka connect.
 
-// TODO - ADD LINK HERE WHEN ARTICLE PUBLISHED.
+[Kafka Connect - Crash Course](https://dev.to/thegroo/kafka-connect-crash-course-1chd)
