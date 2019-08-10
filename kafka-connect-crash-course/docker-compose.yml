@@ -38,6 +38,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # we create topic with 1 partition and 1 replica as it's for local dev and we're running a single broker instance.
       KAFKA_CREATE_TOPICS: 'simple-connect:1:1'
       KAFKA_LOG4J_LOGGERS: >-
         kafka.controller=INFO,
@@ -61,4 +62,4 @@ services:
     depends_on:
       - kafka
     volumes:
-      - /tmp:/tmp
+      - ./connect-input-file:/tmp
